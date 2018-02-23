@@ -1,5 +1,6 @@
-require "sundial/version"
+require 'sundial/version'
 
 module Sundial
-  # Your code goes here...
 end
+
+require 'sundial/duration'
