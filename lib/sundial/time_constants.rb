@@ -1,5 +1,5 @@
 module Sundial
-  class Time
+  class TimeConstants
     MINUTE_SECONDS = 60
     HOUR_MINUTES   = 60
     DAY_HOURS      = 24

@@ -15,7 +15,7 @@ module Sundial
     end
 
     def weekend?(t)
-      t.wday === 0 || t.wday === 6
+      t.saturday? || t.sunday?
     end
   end
 end
