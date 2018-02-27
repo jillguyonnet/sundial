@@ -1,6 +1,8 @@
 module Sundial
   class Schedule
     def elapsed(from, to)
+      raise ArgumentError.new("The end time must be later than the start time.") if from > to
+
       if same_day?(from, to)
         return Sundial::Duration.new(Integer(to - from)) unless weekend?(from)
       end

@@ -2,6 +2,15 @@ RSpec.describe Sundial::Schedule do
   subject(:schedule) { described_class.new }
 
   describe '#elapsed' do
+    context 'when t2 is earlier than t1' do
+      it 'raises an ArgumentError' do
+        from = Time.new(2018, 2, 14, 17)
+        to   = Time.new(2018, 2, 14, 11)
+
+        expect{ schedule.elapsed(from, to) }.to raise_error(ArgumentError)
+      end
+    end
+
     context 'when both times are on the same day' do
       context 'when it is on a business day' do
         it 'returns the elapsed time' do
