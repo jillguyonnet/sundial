@@ -1,6 +1,9 @@
 module Sundial
   class Calculator
-    def time_difference(from, to)
+    def time_difference(time_segment)
+      from = time_segment.start_time
+      to = time_segment.end_time
+
       if same_day?(from, to)
         return Sundial::Duration.new(Integer(to_previous_business_hour(to) - to_next_business_hour(from))) unless weekend?(from)
       end

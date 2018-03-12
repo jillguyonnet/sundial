@@ -8,7 +8,7 @@ RSpec.describe Sundial::Calculator do
           from = Time.new(2018, 2, 14, 10, 0, 0)
           to   = Time.new(2018, 2, 14, 11, 2, 5)
 
-          expect(calculator.time_difference(from, to).in_seconds).to eq 1 * Sundial::TimeConstants::HOUR_SECONDS + 2 * Sundial::TimeConstants::MINUTE_SECONDS + 5
+          expect(calculator.time_difference(Sundial::TimeSegment.new(from, to)).in_seconds).to eq 1 * Sundial::TimeConstants::HOUR_SECONDS + 2 * Sundial::TimeConstants::MINUTE_SECONDS + 5
         end
       end
 
@@ -17,7 +17,7 @@ RSpec.describe Sundial::Calculator do
           from = Time.new(2018, 2, 25, 10, 0, 0)
           to   = Time.new(2018, 2, 25, 11, 2, 5)
 
-          expect(calculator.time_difference(from, to).in_seconds).to eq 0
+          expect(calculator.time_difference(Sundial::TimeSegment.new(from, to)).in_seconds).to eq 0
         end
       end
 
@@ -26,7 +26,7 @@ RSpec.describe Sundial::Calculator do
           from = Time.new(2018, 2, 14, 8)
           to   = Time.new(2018, 2, 14, 11)
 
-          expect(calculator.time_difference(from, to).in_hours).to eq 2
+          expect(calculator.time_difference(Sundial::TimeSegment.new(from, to)).in_hours).to eq 2
         end
       end
 
@@ -35,7 +35,7 @@ RSpec.describe Sundial::Calculator do
           from = Time.new(2018, 2, 14, 11)
           to   = Time.new(2018, 2, 14, 19)
 
-          expect(calculator.time_difference(from, to).in_hours).to eq 6
+          expect(calculator.time_difference(Sundial::TimeSegment.new(from, to)).in_hours).to eq 6
         end
       end
     end
