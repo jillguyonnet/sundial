@@ -1,5 +1,8 @@
 module Sundial
   class Duration
+
+    include Comparable
+
     attr_reader :seconds
 
     def initialize(seconds)
@@ -16,6 +19,12 @@ module Sundial
 
     def in_hours
       seconds / 3600
+    end
+
+    def <=>(other)
+      return unless other.is_a?(self.class)
+
+      seconds <=> other.seconds
     end
   end
 end

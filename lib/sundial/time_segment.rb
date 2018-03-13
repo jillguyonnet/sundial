@@ -8,7 +8,7 @@ module Sundial
     attr_reader :start_time, :end_time
 
     def duration
-      Duration.new(end_time - start_time)
+      Sundial::Duration.new(end_time - start_time)
     end
   end
 end
