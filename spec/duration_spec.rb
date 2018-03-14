@@ -18,4 +18,47 @@ RSpec.describe Sundial::Duration do
       expect(duration.in_hours).to eq(5)
     end
   end
+
+  context 'when performing comparison' do
+    context 'and the compared object is a shorter duration' do
+      let(:other) { described_class.new(300) }
+
+      it 'compares as expected' do
+        expect(duration > other).to eq true
+      end
+    end
+
+    context 'and the compared object is the same duration' do
+      let(:other) { described_class.new(18144) }
+
+      it 'compares as expected' do
+        expect(duration == other).to eq true
+      end
+    end
+
+    context 'and the other object is a longer duration' do
+      let(:other) { described_class.new(20000) }
+
+      it 'compares as expected' do
+        expect(duration < other).to eq true
+      end
+    end
+
+    context 'and the compared object is not a duration' do
+      let(:other) { 1 }
+
+      it 'is not comparable' do
+        expect { duration < other }.to raise_error ArgumentError
+      end
+    end
+  end
+
+  describe '#+' do
+    let(:duration_1) { described_class.new(3600) }
+    let(:duration_2) { described_class.new(300) }
+
+    it 'adds the durations' do
+      expect(duration_1 + duration_2).to eq described_class.new(3900)
+    end
+  end
 end

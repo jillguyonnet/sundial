@@ -26,5 +26,9 @@ module Sundial
 
       seconds <=> other.seconds
     end
+
+    def +(other)
+      self.class.new(seconds + other.seconds)
+    end
   end
 end
