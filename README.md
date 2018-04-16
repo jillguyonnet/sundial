@@ -24,11 +24,11 @@ First, create a schedule:
 
 ```ruby
 hours = {
-  mon: {'09:00' => '17:00'},
-  tue: {'09:00' => '17:00'},
-  wed: {'09:00' => '17:00'},
-  thu: {'09:00' => '17:00'},
-  fri: {'09:00' => '12:00'}
+  mon: ['09:00', '17:00'],
+  tue: ['09:00', '17:00'],
+  wed: ['09:00', '17:00'],
+  thu: ['09:00', '17:00'],
+  fri: ['09:00', '17:00']
 }
 
 schedule = Sundial::Schedule.new(hours)
@@ -65,9 +65,9 @@ schedule.elapsed(Time.new(2018, 2, 14, 19), Time.new(2018, 2, 15, 10)).in_hours 
 
 ```ruby
 # Saturday and Sunday are not listed in the schedule, so they are not taken into account
-# 16 February 2018 was a Friday (business hours = 9am to 12pm)
+# 16 February 2018 was a Friday (business hours = 9am to 5pm)
 # 19 February 2018 was a Monday (business hours = 9am to 5pm)
-schedule.elapsed(Time.new(2018, 2, 16, 9), Time.new(2018, 2, 19, 9)).in_hours # 3
+schedule.elapsed(Time.new(2018, 2, 16, 12), Time.new(2018, 2, 19, 9)).in_hours # 5
 ```
 
 ### Testing

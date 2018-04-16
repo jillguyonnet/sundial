@@ -4,14 +4,6 @@ RSpec.describe Sundial::TimeSegment do
 
   subject(:time_segment) { described_class.new(start_time, end_time) }
 
-  describe '#initalize' do
-    context 'when the end time is earlier than the start time' do
-      it 'raises an ArgumentError' do
-        expect{ described_class.new(Time.new(2018, 2, 15), Time.new(2018, 2, 14)) }.to raise_error(ArgumentError)
-      end
-    end
-  end
-
   describe '#duration' do
     it 'returns a Sundial::Duration object' do
       expect(time_segment.duration).to be_a Sundial::Duration
@@ -23,53 +15,109 @@ RSpec.describe Sundial::TimeSegment do
   end
 
   describe '#start_time' do
-    it 'returns the start time' do
-      expect(time_segment.start_time).to eq(start_time)
+    it 'returns the start time in epoch' do
+      expect(time_segment.start_time).to eq(start_time.to_i)
     end
   end
 
   describe '#end_time' do
-    it 'returns the end time' do
-      expect(time_segment.end_time).to eq(end_time)
+    it 'returns the end time in epoch' do
+      expect(time_segment.end_time).to eq(end_time.to_i)
     end
   end
 
-  describe '#same_day?' do
-    context 'when the start and end time are on the same day' do
-      it 'returns true' do
-        expect(time_segment.same_day?).to eq(true)
+  describe '#&' do
+    context 'when the other time segment occurs before' do
+      let(:other) { described_class.new(Time.new(2018, 2, 13, 9), Time.new(2018, 2, 13, 17)) }
+
+      it 'returns a zero-duration duration' do
+        expect((time_segment & other).duration).to eq(Sundial::Duration.new(0))
       end
     end
 
-    context 'when the start and end time are not on the same day' do
-      it 'returns false' do
-        expect(described_class.new(start_time, Time.new(2018, 2, 15, 17)).same_day?).to eq(false)
+    context 'when the other time segment starts before the start time' do
+      context 'and ends between the start time and the end time' do
+        let(:other) { described_class.new(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 12)) }
+
+        it 'returns the correct time segment' do
+          expect(time_segment & other).to eq(Sundial::TimeSegment.new(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 12)))
+        end
+      end
+
+      context 'and ends after the end time' do
+        let(:other) { described_class.new(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 19)) }
+
+        it 'returns the correct time segment' do
+          expect(time_segment & other).to eq(Sundial::TimeSegment.new(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 17)))
+        end
+      end
+    end
+
+    context 'when the other time segment starts after the start time' do
+      context 'and ends before the end time' do
+        let(:other) { described_class.new(Time.new(2018, 2, 14, 11), Time.new(2018, 2, 14, 12)) }
+
+        it 'returns the correct time segment' do
+          expect(time_segment & other).to eq(Sundial::TimeSegment.new(Time.new(2018, 2, 14, 11), Time.new(2018, 2, 14, 12)))
+        end
+      end
+
+      context 'and ends after the end time' do
+        let(:other) { described_class.new(Time.new(2018, 2, 14, 11), Time.new(2018, 2, 14, 19)) }
+
+        it 'returns the correct time segment' do
+          expect(time_segment & other).to eq(Sundial::TimeSegment.new(Time.new(2018, 2, 14, 11), Time.new(2018, 2, 14, 17)))
+        end
       end
     end
   end
 
-  describe '#full_days_between' do
-    context 'when the start and end times are on the same day' do
-      it 'returns an empty array' do
-        from = Time.new(2018, 2, 14, 9)
-        to   = Time.new(2018, 2, 14, 17)
-        expect(described_class.new(from, to).full_days_between).to eq []
+  context 'when performing comparison' do
+    context 'and the compared object has an earlier start time' do
+      let(:other) { described_class.new(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 17)) }
+
+      it 'compares as expected' do
+        expect(time_segment > other).to eq true
       end
     end
 
-    context 'when the start and end times are consecutive' do
-      it 'returns an empty array' do
-        from = Time.new(2018, 2, 14, 9)
-        to   = Time.new(2018, 2, 15, 17)
-        expect(described_class.new(from, to).full_days_between).to eq []
+    context 'and the compared object has a later start time' do
+      let(:other) { described_class.new(Time.new(2018, 2, 14, 11), Time.new(2018, 2, 14, 17)) }
+
+      it 'compares as expected' do
+        expect(time_segment > other).to eq false
       end
     end
 
-    context 'when the start and end times are not consecutive' do
-      it 'returns an array with the full days in between' do
-        from = Time.new(2018, 2, 14, 9)
-        to   = Time.new(2018, 2, 17, 17)
-        expect(described_class.new(from, to).full_days_between).to eq [Time.new(2018, 2, 15), Time.new(2018, 2, 16)]
+    context 'and the compared object has an earlier end time' do
+      let(:other) { described_class.new(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 15)) }
+
+      it 'compares as expected' do
+        expect(time_segment > other).to eq true
+      end
+    end
+
+    context 'and the compared object has a later end time' do
+      let(:other) { described_class.new(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 19)) }
+
+      it 'compares as expected' do
+        expect(time_segment < other).to eq true
+      end
+    end
+
+    context 'and the compared object has the same endpoints' do
+      let(:other) { described_class.new(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 17)) }
+
+      it 'compares as expected' do
+        expect(time_segment == other).to eq true
+      end
+    end
+
+    context 'and the compared object is not a time_segment' do
+      let(:other) { 1 }
+
+      it 'is not comparable' do
+        expect { time_segment < other }.to raise_error ArgumentError
       end
     end
   end
