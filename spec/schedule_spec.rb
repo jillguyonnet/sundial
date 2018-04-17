@@ -1,11 +1,11 @@
 RSpec.describe Sundial::Schedule do
   let(:business_hours) {
     {
-      mon: ['09:00', '17:00'],
-      tue: ['09:00', '17:00'],
-      wed: ['09:00', '17:00'],
-      thu: ['09:00', '17:00'],
-      fri: ['09:00', '17:00']
+      mon: {'09:00' => '17:00'},
+      tue: {'09:00' => '17:00'},
+      wed: {'09:00' => '12:00', '13:00' => '17:00'},
+      thu: {'09:00' => '20:00'},
+      fri: {'09:00' => '12:00'}
     }
   }
 
@@ -22,6 +22,7 @@ RSpec.describe Sundial::Schedule do
       context 'when the time is out of business hours' do
         it 'returns false' do
           expect(schedule.in_business_hours?(Time.new(2018, 2, 14, 8, 59, 59))).to eq(false) # 14 February 2018 is a Wednesday
+          expect(schedule.in_business_hours?(Time.new(2018, 2, 14, 12, 0, 1))).to eq(false)
           expect(schedule.in_business_hours?(Time.new(2018, 2, 14, 17, 0, 1))).to eq(false)
         end
       end
@@ -29,6 +30,7 @@ RSpec.describe Sundial::Schedule do
       context 'when the time is in business hours' do
         it 'returns true' do
           expect(schedule.in_business_hours?(Time.new(2018, 2, 14, 10))).to eq(true)
+          expect(schedule.in_business_hours?(Time.new(2018, 2, 14, 14))).to eq(true)
         end
       end
     end
@@ -37,13 +39,13 @@ RSpec.describe Sundial::Schedule do
   describe '#business_hours_on_day' do
     context 'when the day is not in the schedule' do
       it 'returns an empty array' do
-        expect(schedule.business_hours_on_day(Time.new(2018, 2, 17))).to eq([]) # 17 February 2018 is a Saturday
+        expect(schedule.business_hours_on_day(Time.new(2018, 2, 17))).to eq({}) # 17 February 2018 is a Saturday
       end
     end
 
     context 'when the day is in the schedule' do
       it 'returns an array with the schedule of the day' do
-        expect(schedule.business_hours_on_day(Time.new(2018, 2, 14))).to eq(['09:00', '17:00']) # 17 February 2018 is a Saturday
+        expect(schedule.business_hours_on_day(Time.new(2018, 2, 14))).to eq({'09:00' => '12:00', '13:00' => '17:00'}) # 17 February 2018 is a Saturday
       end
     end
   end
@@ -55,23 +57,17 @@ RSpec.describe Sundial::Schedule do
       end
     end
 
-    context 'when the start and end time are on the same business day' do
-      it 'returns the correct duration' do
-        expect(schedule.elapsed(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 10))).to eq Sundial::Duration.new(1 * Sundial::SECONDS_PER_HOUR)
-        expect(schedule.elapsed(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 20))).to eq Sundial::Duration.new(8 * Sundial::SECONDS_PER_HOUR)
+    context 'when the start and end times are identical' do
+      it 'returns a zero duration' do
+        expect(schedule.elapsed(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 9))).to eq Sundial::Duration.new(0)
       end
     end
 
-    context 'when the start and end time are on consecutive business days' do
+    context 'when the end time is later than the start time' do
       it 'returns the correct duration' do
-        expect(schedule.elapsed(Time.new(2018, 2, 14, 10), Time.new(2018, 2, 15, 13))).to eq Sundial::Duration.new(11 * Sundial::SECONDS_PER_HOUR)
-        expect(schedule.elapsed(Time.new(2018, 2, 14, 19), Time.new(2018, 2, 15, 10))).to eq Sundial::Duration.new(1 * Sundial::SECONDS_PER_HOUR)
-      end
-    end
-
-    context 'when there are non business days between the start and end time' do
-      it 'returns the correct duration' do
-        expect(schedule.elapsed(Time.new(2018, 2, 16, 12), Time.new(2018, 2, 19, 9))).to eq Sundial::Duration.new(5 * Sundial::SECONDS_PER_HOUR)
+        expect(schedule.elapsed(Time.new(2018, 2, 14, 8), Time.new(2018, 2, 14, 19))).to eq Sundial::Duration.new(7 * Sundial::SECONDS_PER_HOUR)
+        expect(schedule.elapsed(Time.new(2018, 2, 14, 12, 5), Time.new(2018, 2, 14, 12, 55))).to eq Sundial::Duration.new(0)
+        expect(schedule.elapsed(Time.new(2018, 2, 16, 14), Time.new(2018, 2, 19, 10))).to eq Sundial::Duration.new(1 * Sundial::SECONDS_PER_HOUR)
       end
     end
   end

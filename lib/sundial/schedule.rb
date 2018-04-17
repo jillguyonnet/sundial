@@ -10,16 +10,17 @@ module Sundial
     def in_business_hours?(t)
       return false unless business_hours.keys.include?(Sundial::WEEK_DAYS[t.wday])
 
-      business_hours_start = Time.new(t.year, t.month, t.day, business_hours[Sundial::WEEK_DAYS[t.wday]][0].to_i)
-      business_hours_end = Time.new(t.year, t.month, t.day, business_hours[Sundial::WEEK_DAYS[t.wday]][1].to_i)
+      business_hours[Sundial::WEEK_DAYS[t.wday]].keys.each do |start|
+        return true if t >= Time.new(t.year, t.month, t.day, start.to_i) && t <= Time.new(t.year, t.month, t.day, business_hours[Sundial::WEEK_DAYS[t.wday]][start].to_i)
+      end
 
-      t >= business_hours_start && t <= business_hours_end
+      false
     end
 
     def business_hours_on_day(t)
-      return [] unless business_hours.keys.include?(Sundial::WEEK_DAYS[t.wday])
+      return {} unless business_hours.keys.include?(Sundial::WEEK_DAYS[t.wday])
 
-      [business_hours[Sundial::WEEK_DAYS[t.wday]][0], business_hours[Sundial::WEEK_DAYS[t.wday]][1]]
+      business_hours[Sundial::WEEK_DAYS[t.wday]]
     end
 
     def elapsed(from, to)
