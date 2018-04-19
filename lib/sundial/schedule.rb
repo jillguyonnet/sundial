@@ -7,26 +7,34 @@ module Sundial
 
     attr_reader :business_hours
 
-    def in_business_hours?(t)
-      return false unless business_hours.keys.include?(Sundial::WEEK_DAYS[t.wday])
+    def in_business_hours?(time)
+      return false unless business_hours.keys.include?(Sundial::WEEK_DAYS[time.wday])
 
-      business_hours[Sundial::WEEK_DAYS[t.wday]].keys.each do |start|
-        return true if t >= Time.new(t.year, t.month, t.day, start.to_i) && t <= Time.new(t.year, t.month, t.day, business_hours[Sundial::WEEK_DAYS[t.wday]][start].to_i)
+      business_hours[Sundial::WEEK_DAYS[time.wday]].keys.each do |start|
+        return true if time >= Time.new(time.year, time.month, time.day, start.to_i) && time <= Time.new(time.year, time.month, time.day, business_hours[Sundial::WEEK_DAYS[time.wday]][start].to_i)
       end
 
       false
     end
 
-    def business_hours_on_day(t)
-      return {} unless business_hours.keys.include?(Sundial::WEEK_DAYS[t.wday])
+    def business_hours_on_date(date)
+      return {} unless business_hours.keys.include?(Sundial::WEEK_DAYS[date.wday])
 
-      business_hours[Sundial::WEEK_DAYS[t.wday]]
+      business_hours[Sundial::WEEK_DAYS[date.wday]]
     end
 
-    def elapsed(from, to)
-      raise ArgumentError.new("The end time must be later than the start time.") if from > to
+    def time_segments_on_date(date)
+      business_hours_on_date(date).map { |start_time, end_time|
+        Sundial::TimeSegment.new(
+          Time.new(date.year, date.month, date.day, start_time.to_i),
+          Time.new(date.year, date.month, date.day, end_time.to_i))
+        }
+    end
 
-      @time_difference_calculator.elapsed(from, to)
+    def elapsed(start_time, end_time)
+      raise ArgumentError.new("The end time must be later than the start time.") if start_time > end_time
+
+      @time_difference_calculator.elapsed(start_time, end_time)
     end
   end
 end
