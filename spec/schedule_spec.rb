@@ -9,7 +9,11 @@ RSpec.describe Sundial::Schedule do
     }
   }
 
-  subject(:schedule) { described_class.new(business_hours) }
+  let(:configuration) {
+    proc { |config| config.business_hours = business_hours }
+  }
+
+  subject(:schedule) { described_class.new(&configuration) }
 
   describe '#in_business_hours?' do
     context 'when the day is not in the schedule' do

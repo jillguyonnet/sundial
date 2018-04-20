@@ -8,7 +8,12 @@ RSpec.describe Sundial::TimeDifference do
       fri: {'09:00' => '12:00'}
     }
   }
-  let(:schedule) { Sundial::Schedule.new(business_hours) }
+
+  let(:configuration) {
+    proc { |config| config.business_hours = business_hours }
+  }
+
+  let(:schedule) { Sundial::Schedule.new(&configuration) }
 
   subject(:time_difference) { described_class.new(schedule) }
 
