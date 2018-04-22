@@ -4,7 +4,7 @@ module Sundial
       @schedule = schedule
     end
 
-    def elapsed(start_time, end_time)
+    def business_time_between(start_time, end_time)
       raise ArgumentError.new("The end time must be later than the start time.") if start_time > end_time
 
       reference = Sundial::TimeSegment.new(start_time, end_time)

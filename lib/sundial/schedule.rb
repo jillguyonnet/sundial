@@ -31,10 +31,10 @@ module Sundial
         }
     end
 
-    def elapsed(start_time, end_time)
+    def business_time_between(start_time, end_time)
       raise ArgumentError.new("The end time must be later than the start time.") if start_time > end_time
 
-      @time_difference_calculator.elapsed(start_time, end_time)
+      @time_difference_calculator.business_time_between(start_time, end_time)
     end
   end
 end

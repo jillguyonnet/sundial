@@ -22,10 +22,10 @@ RSpec.describe Sundial do
       end
     end
 
-    describe '.elapsed' do
+    describe '.business_time_between' do
       it 'delegates to the schedule' do
-        expect(described_class.elapsed(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 9))).to eq Sundial::Duration.new(0)
-        expect(described_class.elapsed(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 19))).to eq Sundial::Duration.new(8 * Sundial::SECONDS_PER_HOUR)
+        expect(described_class.business_time_between(Time.new(2018, 2, 14, 9), Time.new(2018, 2, 14, 9))).to eq Sundial::Duration.new(0)
+        expect(described_class.business_time_between(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 19))).to eq Sundial::Duration.new(8 * Sundial::SECONDS_PER_HOUR)
       end
     end
   end

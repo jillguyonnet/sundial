@@ -3,7 +3,7 @@
 A simple Ruby gem allowing to configure a weekly schedule and query the following:
 - if a given time is in or out of business hours;
 - what are the business hours on a given date;
-- how much business time has elapsed between two times.
+- the amount of business time between two times.
 
 ## Installation
 
@@ -60,16 +60,16 @@ d = Date.new(2018, 2, 17) # Saturday
 puts Sundial.business_hours_on_date(d) # {}
 ```
 
-### Calculate elapsed business time between two given times
+### Calculate business time between two given times
 
-To calculate the elapsed business time using your schedule, simply use `Sundial.elapsed(from, to)`, where `from` and `to` are `Time` objects. This method returns a `Sundial::Duration` object, which can return how many seconds, minutes or hours (as integers) are contained in the elapsed time:
+To calculate the business time between two given times using your schedule, simply use `Sundial.business_time_between(from, to)`, where `from` and `to` are `Time` objects. This method returns a `Sundial::Duration` object, which can be expressed in seconds, minutes or hours:
 
 ```ruby
 # 14 February 2018 was a Wednesday (business hours = 9am to 12pm, 1pm to 5pm)
 start_time = Time.new(2018, 2, 14, 8)
 end_time   = Time.new(2018, 2, 14, 19)
 
-duration = Sundial.elapsed(start_time, end_time) # Sundial::Duration
+duration = Sundial.business_time_between(start_time, end_time) # Sundial::Duration
 
 puts duration.in_seconds # 25200
 puts duration.in_minutes # 420
@@ -80,21 +80,21 @@ More examples:
 
 ```ruby
 # 14 February 2018 was a Wednesday (business hours = 9am to 12pm, 1pm to 5pm)
-puts Sundial.elapsed(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 10)).in_hours # 1
-puts Sundial.elapsed(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 20)).in_hours # 7
+puts Sundial.business_time_between(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 10)).in_hours # 1
+puts Sundial.business_time_between(Time.new(2018, 2, 14, 7), Time.new(2018, 2, 14, 20)).in_hours # 7
 ```
 
 ```ruby
 # From Monday 12 February 2018 to Tuesday 13 February 2018 (business hours = 9am to 5pm)
-puts Sundial.elapsed(Time.new(2018, 2, 12, 10), Time.new(2018, 2, 13, 13)).in_hours # 11
-puts Sundial.elapsed(Time.new(2018, 2, 12, 19), Time.new(2018, 2, 13, 10)).in_hours # 1
+puts Sundial.business_time_between(Time.new(2018, 2, 12, 10), Time.new(2018, 2, 13, 13)).in_hours # 11
+puts Sundial.business_time_between(Time.new(2018, 2, 12, 19), Time.new(2018, 2, 13, 10)).in_hours # 1
 ```
 
 ```ruby
 # Saturday and Sunday are not listed in the schedule, so they are not taken into account
 # 16 February 2018 was a Friday (business hours = 9am to 12pm)
 # 19 February 2018 was a Monday (business hours = 9am to 5pm)
-puts Sundial.elapsed(Time.new(2018, 2, 16, 14), Time.new(2018, 2, 19, 10)).in_hours # 1
+puts Sundial.business_time_between(Time.new(2018, 2, 16, 14), Time.new(2018, 2, 19, 10)).in_hours # 1
 ```
 
 ### Testing
