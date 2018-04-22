@@ -26,5 +26,9 @@ module Sundial
 
       [start_time, end_time] <=> [other.start_time, other.end_time]
     end
+
+    def include?(time)
+      time.to_i >= @start_time && time.to_i <= @end_time ? true : false
+    end
   end
 end

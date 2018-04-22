@@ -121,4 +121,24 @@ RSpec.describe Sundial::TimeSegment do
       end
     end
   end
+
+  describe '#include?' do
+    context 'when the time is within the time segment' do
+      it 'returns true' do
+        expect(time_segment.include?(Time.new(2018, 2, 14, 13))).to eq(true)
+      end
+    end
+
+    context 'when the time is before the time segment' do
+      it 'returns false' do
+        expect(time_segment.include?(Time.new(2018, 2, 14, 7))).to eq(false)
+      end
+    end
+
+    context 'when the time is after the time segment' do
+      it 'returns false' do
+        expect(time_segment.include?(Time.new(2018, 2, 14, 19))).to eq(false)
+      end
+    end
+  end
 end
