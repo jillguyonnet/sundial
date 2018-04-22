@@ -4,6 +4,8 @@ module Sundial
 
     def initialize
       yield self
+
+      Validation.perform(self)
     end
   end
 end

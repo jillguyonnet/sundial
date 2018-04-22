@@ -21,9 +21,10 @@ module Sundial
 end
 
 require 'sundial/configuration'
+require 'sundial/constants'
 require 'sundial/duration'
 require 'sundial/schedule'
-require 'sundial/constants'
 require 'sundial/time_segment'
 require 'sundial/time_difference'
+require 'sundial/validation'
 require 'sundial/version'
