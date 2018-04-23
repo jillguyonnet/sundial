@@ -36,7 +36,7 @@ module Sundial
     private
 
     def business_hours_include?(wday)
-      configuration.business_hours.keys.include?(Sundial::WEEK_DAYS[wday])
+      configuration.business_hours.key? Sundial::WEEK_DAYS[wday]
     end
   end
 end
